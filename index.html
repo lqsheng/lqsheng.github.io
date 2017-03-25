@@ -72,7 +72,7 @@ var _hmt = _hmt || [];
 		<nav class="header-smart-menu">
     		
     			
-    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">文章列表</a>
     			
             
     			
@@ -148,127 +148,36 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-测试" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Android studio2.2配置opencv for android（CMake方式）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/20/测试/">测试</a>
+      <a class="article-title" href="/2085/01/16/Android studio2.2配置opencv for android（CMake方式）/">Android studio2.2配置opencv for android（CMake方式）</a>
     </h1>
   
 
         
-        <a href="/2017/03/20/测试/" class="archive-article-date">
-  	<time datetime="2017-03-20T11:50:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-20</time>
+        <a href="/2085/01/16/Android studio2.2配置opencv for android（CMake方式）/" class="archive-article-date">
+  	<time datetime="2085-01-15T23:33:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2085-01-16</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>女杰的防护具</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/20/测试/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-my-blog" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/20/my-blog/">my blog</a>
-    </h1>
-  
-
-        
-        <a href="/2017/03/20/my-blog/" class="archive-article-date">
-  	<time datetime="2017-03-20T09:06:09.697Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="Android-studio2-2配置opencv-for-android（CMake方式）"><a href="#Android-studio2-2配置opencv-for-android（CMake方式）" class="headerlink" title="Android studio2.2配置opencv for android（CMake方式）"></a>Android studio2.2配置opencv for android（CMake方式）</h1><p>由于项目需要不得不从原来的eclipse转到android studio下使用opencv for android，AS2.2已经开始支持CMake方式开发NDK，但网上大多数教程仍是使用Application.mk的老方式。而使用新方式不仅配置简单，而且可以获得native代码的自动提示、调试、自动补全。在参考了几篇博文下，终于搞出来了，其中碰到一些问题，这些博客并没有提到，所以特此写下整个配置过程及一些可能遇到的问题的解决方案。</p>
+        <p>由于项目需要不得不从原来的eclipse转到android studio下使用opencv for android，AS2.2已经开始支持CMake方式开发NDK，但网上大多数教程仍是使用Application.mk的老方式。而使用新方式不仅配置简单，而且可以获得native代码的自动提示、调试、自动补全。在参考了几篇博文下，终于搞出来了，其中碰到一些问题，这些博客并没有提到，所以特此写下整个配置过程及一些可能遇到的问题的解决方案。</p>
 <p><strong>文章结构：</strong></p>
 <p>[TOC]</p>
 <p><strong>使用的软件版本</strong></p>
 <ul>
 <li>android studio 2.2.3</li>
-<li>opencv for android （下载链接：<a href="http://opencv.org/downloads.html" target="_blank" rel="external">opencv官网下载</a> ）我使用的版本是3.2.0</li>
-</ul>
-<h2 id="1、NDK的安装"><a href="#1、NDK的安装" class="headerlink" title="1、NDK的安装"></a><strong>1、NDK的安装</strong></h2><p>按草图步骤提示安装NDK、CMake和LLDB，安装好的NDK在Android SDK的sdk/ndk-bundle文件夹下。<br><img src="http://img.blog.csdn.net/20170224183237949?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="NDK的安装"></p>
-<h2 id="2、native层使用opencv的配置过程"><a href="#2、native层使用opencv的配置过程" class="headerlink" title="2、native层使用opencv的配置过程"></a><strong>2、native层使用opencv的配置过程</strong></h2><p>首先新建项目，勾选C++的支持<br><img src="http://img.blog.csdn.net/20170224185930954?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="新建项目"><br>继续，Minimum sdk版本建议最好选择API21以上，除非手头设备安卓系统版本低<br><img src="http://img.blog.csdn.net/20170224190312435?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="SDK选择"><br>再继续，最后这个配置界面千万记得勾选，我当时此处没勾，后面报错找了好久才找到解决方案，具体报错内容最后再说<br><img src="http://img.blog.csdn.net/20170224190440384?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="C++的配置"><br>点开CMakeLists.txt文件，如图，在其中加入以下几句代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">set(OpenCV_DIR E:/Android/OpenCV-android-sdk/sdk/native/jni)</div><div class="line">find_package(OpenCV REQUIRED)</div><div class="line">target_link_libraries($&#123;OpenCV_LIBS&#125;)</div></pre></td></tr></table></figure>
-<p><img src="http://img.blog.csdn.net/20170224221809463?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="CMakeLists.txt的修改"><br>然后在app下的build.gradle的android{defaultConfig{}}下加入如下代码（如图，注意大括号的包含关系）：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ndk&#123;</div><div class="line">      abiFilters &apos;armeabi-v7a&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><img src="http://img.blog.csdn.net/20170224222623286?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"><br>这里起一个过滤作用，这里应根据自己手机的CPU类型来进行选择。</p>
-<p>*安卓设备的CPU类型：</p>
-<ul>
-<li>armeabiv-v7a: 第7代及以上的 ARM 处理器。2011年15月以后的生产的大部分Android设备都使用它.</li>
-<li>arm64-v8a: 第8代、64位ARM处理器，很少设备，三星 Galaxy S6是其中之一。</li>
-<li>armeabi: 第5代、第6代的ARM处理器，早期的手机用的比较多。</li>
-<li>x86: 平板、模拟器用得比较多。</li>
-<li>x86_64: 64位的平板。</li>
-</ul>
-<p>至此，只要包含opencv的头文件就可以愉快地在native层使用opencv了，当然，注意把函数写在extern “C” {}块里，其目的是使这部分代码块表按照类C的编译和连接规约来编译和连接，而不是C++的编译的连接规约。这样在类C的代码中就可以调用C++的函数or变量等。如果不这么写，程序会闪退，logcat报错“No implementation found for ‘you native method name’”</p>
-<p>而且，使用时只需在java层用native关键字声明native层的函数，然后按ALT+ENTER选第一项即可在cpp文件里自动生成函数头，而不再需要像老方法一样使用javah来获得正确的函数头。</p>
-<p><img src="http://img.blog.csdn.net/20170225001732471?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="自动生成函数头"></p>
-<p>当然，如果需要调用摄像头和读取文件，别忘了在AndroidManifest.xml加上用到的权限：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot;/&gt;</div><div class="line">    &lt;uses-permission android:name=&quot;android.permission.CAMERA&quot;/&gt;</div><div class="line"></div><div class="line">    &lt;uses-feature android:name=&quot;android.hardware.camera&quot; android:required=&quot;true&quot;/&gt;</div><div class="line">    &lt;uses-feature android:name=&quot;android.hardware.camera.autofocus&quot; android:required=&quot;true&quot;/&gt;</div><div class="line">    &lt;uses-feature android:name=&quot;android.hardware.camera.front&quot; android:required=&quot;true&quot;/&gt;</div><div class="line">    &lt;uses-feature android:name=&quot;android.hardware.camera.front.autofocus&quot; android:required=&quot;true&quot;/&gt;</div></pre></td></tr></table></figure>
-<h2 id="3、java层使用opencv的配置过程"><a href="#3、java层使用opencv的配置过程" class="headerlink" title="3、java层使用opencv的配置过程"></a><strong>3、java层使用opencv的配置过程</strong></h2><p>一般native层配合java层一起使用opencv才舒服，当然，简单一些的应用直接在java层使用opencv也是不错，若如此，前面native层的配置就不用了，当然，新建工程时自然也不需要勾选C++的支持。</p>
-<p>我们把刚才OpenCV for Android目录下的java文件夹作为module导入进来。具体步骤是File-&gt;new-&gt;import module然后选择自己的路径如图：<br><img src="http://img.blog.csdn.net/20170224230451689?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="导入java支持"><br>之后后面的不用修改，直接到最后Finish就行。 导入完成后注意需将将OpenCV这个module的build.gradle的版本信息改成跟app module的build.gradle的版本信息一样。</p>
-<p>接着点击File-&gt;Project Structure，然后按照如图的顺序点击将OpenCV作为app module的Dependency导入进来<br><img src="http://img.blog.csdn.net/20170224231148176?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="导入opencv module"><br>至此，在代码里使用opencv就会有补全提示了，参考的博文里提到配置到这就可以顺利在java层使用opencv，然而经检验发现这还不够，虽然编译不报错，可以生成apk并顺利部署，但尝试运行却会闪退报错。因而还需继续进行配置。还需要在java层load一个libopencv_java3.so（3.0版本）或libopencv_java.so（2.4版本）库。</p>
-<p>首先，在app/src/main目录下建立一个libs文件夹，然后再在其目录下建立子目录，对应指定的编译平台。然后前往本地的OpenCV for Android 的libs目录下选择对应的平台，我的是E:\Android\OpenCV-android-sdk\sdk\native\libs\armeabi-v7a，然后将里面的libopencv_java3.so库文件拷贝到我们刚才建立的文件夹下，如图：<br><img src="http://img.blog.csdn.net/20170224232515524?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="添加库"><br>然后如图在app module的build.gradle的android{defaultConfig{}}加入如下代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sourceSets.main&#123;</div><div class="line">            jniLibs.srcDir &apos;src/main/libs&apos; //set .so files directory to libs</div><div class="line">            jni.srcDirs = [] //disable automatic ndk-build call</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><img src="http://img.blog.csdn.net/20170224232914262?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="build.gradle的修改"><br>然后Sync Now，就可以在Android视图下看到app目录下多了一个jniLibs目录。<br>之后，再在你想要使用jni的类中load opencv_java这个库就行了。如图：<br><img src="http://img.blog.csdn.net/20170224233215845?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvdTAxMDA5NzY0NA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="load opencv_java"></p>
-<h2 id="4、遇到的一些问题以及解决方法"><a href="#4、遇到的一些问题以及解决方法" class="headerlink" title="4、遇到的一些问题以及解决方法"></a><strong>4、遇到的一些问题以及解决方法</strong></h2><ol>
-<li>报错error cannot use typeid with fno rtti，原因是因为没有开rtti支持，也就是前面提到的新建项目时最后一个配置界面，解决办法：在app module的build.gradle的cmake {cppFlags “” }加入 “-frtti”</li>
-<li>Camera2 报错，原因是安卓从API21才开始引入Camera2，这就是前面建议最低SDK选择API21的原因，如果设备系统版本太低，那就删吧。</li>
-</ol>
-<h2 id="5、参考资料"><a href="#5、参考资料" class="headerlink" title="5、参考资料"></a>5、<strong>参考资料</strong></h2><ul>
-<li><p><a href="http://blog.csdn.net/zxx20145/article/details/53020964?utm_source=itdadao&amp;utm_medium=referral" target="_blank" rel="external">Android Studio 2.2 让你5分钟配置好 OpenCV for   Android（java层和native层都可以使用）</a></p>
-</li>
-<li><p><a href="http://blog.csdn.net/martin20150405/article/details/53284442" target="_blank" rel="external">使用Android Studio 2.2和Cmake （CMakeLists）让OpenCV 飞起来</a></p>
-</li>
-<li><p><a href="https://zhuanlan.zhihu.com/p/23102158" target="_blank" rel="external">我的Android进阶之旅——&gt;Android 关于arm64-v8a、armeabi-v7a、armeabi、x86下的so文件兼容问题</a></p>
-</li>
-<li><p><a href="http://stackoverflow.com/questions/36204781/error-package-android-hardware-camera2-does-not-exist-opencv" target="_blank" rel="external">Error: package android.hardware.camera2 does not exist OpenCV
-</a></p>
-</li>
-<li><a href="http://stackoverflow.com/questions/8723702/error-cannot-use-typeid-with-fno-rtti" target="_blank" rel="external">Error: Cannot use typeid with -fno-rtti</a></li>
-</ul>
-
+<li>opencv for android （下载链接：<a href="http://opencv.org/downloads.html">opencv官网下载</a> ）我使用的版本是3.2.0
+        
+          <a class="article-more-a" href="/2085/01/16/Android studio2.2配置opencv for android（CMake方式）/#more">more >></a>
+        
       
 
       
@@ -276,11 +185,22 @@ var _hmt = _hmt || [];
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">opencv4android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/20/my-blog/">展开全文 >></a>
+          <a class="article-more-a" href="/2085/01/16/Android studio2.2配置opencv for android（CMake方式）/">阅读全文 >></a>
         </p>
       
 
@@ -339,7 +259,7 @@ var _hmt = _hmt || [];
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/20/hello-world/">展开全文 >></a>
+          <a class="article-more-a" href="/2017/03/20/hello-world/">阅读全文 >></a>
         </p>
       
 
@@ -413,7 +333,7 @@ var _hmt = _hmt || [];
     
     
       
-      <li style="width: 100%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 100%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">文章列表</a></li>
       
         
       
@@ -436,6 +356,10 @@ var _hmt = _hmt || [];
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
