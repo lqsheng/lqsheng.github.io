@@ -209,6 +209,76 @@ var _hmt = _hmt || [];
 
 
   
+    <article id="post-DSST折腾笔记（一）：树莓派3上的移植" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/02/DSST折腾笔记（一）：树莓派3上的移植/">DSST折腾笔记（一）：树莓派3上的移植</a>
+    </h1>
+  
+
+        
+        <a href="/2017/04/02/DSST折腾笔记（一）：树莓派3上的移植/" class="archive-article-date">
+  	<time datetime="2017-04-02T02:10:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！TLD已是2009年的工作了，算是比较久远的了，却能火到现在，可见其地位)。回到DSST，这篇算法是基于MOSSE的改进，突出内容是加入了尺度变换，文中指出该算法亮点是大部分算法只要是多尺度问题，都可以通过DSST中的尺度部分来解决。2015年开始tracking就被深度学习的算法攻陷了，效果确实很赞，然而受硬件限制，也受速度限制，不适合在移动端跑。所以当前来说DSST应是最契合我的需求的了。先把它移植过来用着，后面再好好研究下代码，希望把深度信息利用进去进一步提升工程上的跟踪效果。</p>
+<p><strong>文章结构：</strong></p>
+<p>[TOC]</p>
+        
+          <a class="article-more-a" href="/2017/04/02/DSST折腾笔记（一）：树莓派3上的移植/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">opencv</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">tracking</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/04/02/DSST折腾笔记（一）：树莓派3上的移植/">阅读全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-QT使用ROS自带的opencv新建使用OPENCV的QT工程（None ROS）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -428,6 +498,10 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">opencv</a>
               </li>
              
@@ -436,7 +510,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+                <a href="javascript:void(0)" class="js-tag color4">tracking</a>
               </li>
             
             <div class="clearfix"></div>
