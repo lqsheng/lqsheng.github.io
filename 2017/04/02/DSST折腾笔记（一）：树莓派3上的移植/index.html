@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="胜">
 <meta property="og:description" content="DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！T">
 <meta property="og:image" content="http://123.206.218.130/img/blog/170402/neon.png">
-<meta property="og:updated_time" content="2017-04-02T15:32:25.543Z">
+<meta property="og:updated_time" content="2017-04-02T16:24:38.539Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DSST折腾笔记（一）：树莓派3上的移植">
 <meta name="twitter:description" content="DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！T">
@@ -187,6 +187,8 @@ var _hmt = _hmt || [];
 <p>(4)、继续编译，报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;_mm_rsqrt_ps&apos; was not declared in this scope</div></pre></td></tr></table></figure></p>
 <p>所以说那位写精简版源码的大佬显然并没有在arm下跑过，甚至大概就没有编译~原因是那会参考资料[3]那个工作还没有实现_mm_rsqrt_ps这个函数，尽管这位大佬在20天前更新过一次源码，但精力应该是放在了改进跟踪效果上（因为另一位博主说用过前一版的源码，效果并不理想，据其粗看这次更新主要调整了一些内部参数）。而SSE2NEON这个工作其实已经做出了更新，包含了更多的SSE的NEON实现。最近的一次更新就在4天前，目前支持95个SSE intrinsics函数,其中39个在arm上做了完整的测试，其余的实际效果还待测试。言下之意就是其余的并不保证没有bug。注意到最新的一次commits提到有些指令在32位机器上运行会有问题，而64位机器运行正常，目前fix了一部分。这个工作还需要也值得继续关注。<br>解决方案：用最新的SSE2NEON.h进行替换。</p>
 <p>这一次总算能顺利编译通过了，满心欢喜地点run，然而，在选定跟踪目标后就挂了，好气啊！大概是32位机器的锅吧~得找个64位的机器来试试，嗯，想起来了，室友的荣耀7就是~2333~事实证明64位机器是可行的！</p>
+<p>查看机器是不是64位机器的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">more /proc/cpuinfo</div></pre></td></tr></table></figure></p>
+<p>然而有些机器虽是64位的，但系统是32位的，就得用这个指令再确认下系统版本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">umane -a</div></pre></td></tr></table></figure></p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a><strong>参考资料</strong></h2><ul>
 <li><a href="http://blog.csdn.net/jacke121/article/details/54562570" target="_blank" rel="external">目标跟踪学习算法DSST</a>（这位博主DSST分类下的几篇博文以及所引用的其他博主的相关博文都不错）</li>
 <li><a href="https://github.com/TuringKi/fDSST_cpp" target="_blank" rel="external">TuringKi/fDSST_cpp - github</a></li>
@@ -261,6 +263,15 @@ var _hmt = _hmt || [];
 
   
 <nav id="article-nav">
+  
+    <a href="/2017/04/02/DSST折腾笔记（二）：在安卓手机下的移植/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          DSST折腾笔记（二）：在安卓手机下的移植
+        
+      </div>
+    </a>
   
   
     <a href="/2017/03/27/motivation(170327)/" id="article-nav-older" class="article-nav-link-wrap">
@@ -384,11 +395,11 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">QT</a>
+                <a href="javascript:void(0)" class="js-tag color4">tracking</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">tracking</a>
+                <a href="javascript:void(0)" class="js-tag color3">QT</a>
               </li>
             
             <div class="clearfix"></div>
