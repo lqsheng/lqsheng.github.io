@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="胜">
 <meta property="og:description" content="DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！T">
 <meta property="og:image" content="http://123.206.218.130/img/blog/170402/neon.png">
-<meta property="og:updated_time" content="2017-04-02T15:00:28.087Z">
+<meta property="og:updated_time" content="2017-04-02T15:16:26.785Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DSST折腾笔记（一）：树莓派3上的移植">
 <meta name="twitter:description" content="DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！T">
@@ -170,26 +170,27 @@ var _hmt = _hmt || [];
     <div class="article-entry" itemprop="articleBody">
       
         <p>DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！TLD已是2009年的工作了，算是比较久远的了，却能火到现在，可见其地位)。回到DSST，这篇算法是基于MOSSE的改进，突出内容是加入了尺度变换，文中指出该算法亮点是大部分算法只要是多尺度问题，都可以通过DSST中的尺度部分来解决。2015年开始tracking就被深度学习的算法攻陷了，效果确实很赞，然而受硬件限制，也受速度限制，不适合在移动端跑。所以当前来说DSST应是最契合我的需求的了。先把它移植过来用着，后面再好好研究下代码，希望把深度信息利用进去进一步提升工程上的跟踪效果。</p>
-<p><strong>文章结构：</strong></p>
+<p><strong>博文结构：</strong></p>
 <p>[TOC]</p>
 <a id="more"></a>
-<h2 id="前述后的前述"><a href="#前述后的前述" class="headerlink" title="前述后的前述"></a><strong>前述后的前述</strong></h2><p>考虑到大疆的精灵可靠性安全性比较好，所以打算先用手头的P3P来做初期算法的验证（没办法，穷，买不起经纬系列，恩，花这么多钱买第三方成品也不符合我们发展自主飞控的初衷），而精灵只支持Mobile sdk，也就是说这个算法必须得在手机上跑起来。所以，这跟树莓派有啥关系？事实上是先尝试了直接在安卓下移植，然而没跑起来，原因我也说不清楚，毕竟NDK开发我也只是入了个门，所以指不定是我没移植好，另一种可能就是算法在arm架构下有bug了，所以还是先在同为arm架构的树莓派上试试吧。下笔前纠结了下要不要把这部分记录下来，考虑到过程中碰到一些额外的值得记录的问题，还是记下吧。<br>之所以怀疑arm下有问题，主要是DSST算法的源码里用到了SSE汇编指令加速（不然哪能这么高效），而SSE这玩意是intel家的，arm下可跑不了。遗憾的是intel在PC上是霸主，但在手机领域被arm吊打，我们用的手机从高端旗舰到华强北出的各种山寨，几乎清一色arm架构。幸而在参考资料博文[1]的指引下，找到一个支持arm的精简版源码（参考资料[2]）,支持arm的思路是用arm的NEON指令集实现SSE的同名函数，这部分工作又是另一位大佬做的（参考资料[3],现在最新的成果应该说是几位大佬的贡献了），只不过，这位大兄弟肯定没在arm架构下跑过，这个坑回头再说。但是精简工作做得很给力，原版源码复杂的工程结构被精简成了一个cpp文件和十个头文件，接口也写得更清晰易读，只需自己写个简单的main函数就能跑了。</p>
+<h2 id="前述后的前述"><a href="#前述后的前述" class="headerlink" title="前述后的前述"></a><strong>前述后的前述</strong></h2><p>考虑到大疆的精灵可靠性安全性比较好，所以打算先用手头的P3P来做初期算法的验证（没办法，穷，买不起经纬系列，恩，花这么多钱买第三方飞行平台也不符合我们发展自主飞控的初衷），而精灵只支持Mobile sdk，也就是说这个算法必须得在手机上跑起来。所以，这跟树莓派有啥关系？事实上是先尝试了直接在安卓下移植，然而没跑起来，原因我也说不清楚，毕竟NDK开发我也只是入了个门，所以指不定是我没移植好，另一种可能就是算法在arm架构下有bug了，所以还是先在同为arm架构的树莓派上试试吧。下笔前纠结了下要不要把这部分记录下来，考虑到过程中碰到一些额外的值得记录的问题，还是记下吧。<br>之所以怀疑arm下有问题，主要是DSST算法的源码里用到了SSE汇编指令加速（不然哪能这么高效），而SSE这玩意是intel家的，arm下可跑不了。遗憾的是intel在PC上是霸主，但在手机领域被arm吊打，我们用的手机从高端旗舰到华强北出的各种山寨，几乎清一色arm架构。幸而在参考资料博文[1]的指引下，找到一个支持arm的精简版源码（参考资料[2]）,支持arm的思路是用arm的NEON指令集实现SSE的同名函数，这部分工作又是另一位大佬做的（参考资料[3],现在最新的成果应该说是几位大佬的贡献了），只不过，这位大兄弟肯定没在arm架构下跑过，这个坑回头再说。但是精简工作做得很给力，原版源码复杂的工程结构被精简成了一个cpp文件和十个头文件，接口也写得更清晰易读，只需自己写个简单的main函数就能跑了。</p>
 <h2 id="移植环境"><a href="#移植环境" class="headerlink" title="移植环境"></a><strong>移植环境</strong></h2><ul>
 <li>qtcreater+opencv3.2+树莓派3B(ubuntu mate 16.04)</li>
 </ul>
 <p>说起树莓派，还真是身(la)材(ji)虽(ban)小(zi)，性(hui)能(wo)强(qing)劲(chun)！话说家乡山野间的树莓，这会正是好吃的时候呢~真想回到童年。</p>
-<h2 id="移植过程及所遇问题"><a href="#移植过程及所遇问题" class="headerlink" title="移植过程及所遇问题"></a><strong>移植过程及所遇问题</strong></h2><p>(1)opencv库路径头文件路径配置后，二话不说先编译，报错：(具体是bits下哪个头文件忘了，发现解决了之后没法复现这个问题了orz~)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fatal error: bits/xxx.h: No such file or directory</div></pre></td></tr></table></figure></p>
+<h2 id="移植过程及所遇问题"><a href="#移植过程及所遇问题" class="headerlink" title="移植过程及所遇问题"></a><strong>移植过程及所遇问题</strong></h2><p>(1)、opencv库路径头文件路径配置后，二话不说先编译，报错：(具体是bits下哪个头文件忘了，发现解决了之后没法复现这个问题了orz~)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fatal error: bits/xxx.h: No such file or directory</div></pre></td></tr></table></figure></p>
 <p>解决方案：apt-get install gcc-multilib</p>
-<p>(2)既然现在是arm平台下，那自然要把NEON的头文件包含进来，如图，注释掉sse.hpp里的emmintrin.h,再将SSE2NEON.h include进来。好像OK了？编译下喽~<br><img src="http://123.206.218.130/img/blog/170402/neon.png" alt="SSE2NEON" align="center/"><br>一堆报错~最亮眼的是这个：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#error You must enable NEON instructions(e.g.-mfloat-abi=softfp -mfpu=neon)to use arm_neon.h</div></pre></td></tr></table></figure></p>
+<p>(2)、既然现在是arm平台下，那自然要把NEON的头文件包含进来，如图，注释掉sse.hpp里的emmintrin.h,再将SSE2NEON.h include进来。好像OK了？编译下喽~<br><img src="http://123.206.218.130/img/blog/170402/neon.png" alt="SSE2NEON" align="center/"><br>一堆报错~最亮眼的是这个：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#error You must enable NEON instructions(e.g.-mfloat-abi=softfp -mfpu=neon)to use arm_neon.h</div></pre></td></tr></table></figure></p>
 <p>解决方案：人家已经告诉你喽，在工程配置文件里添加QMAKE_CXXFLAGS += -mfloat-abi=softfp -mfpu=neon</p>
-<p>(3)然而并没有那么顺利，报一堆错类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error dssttest uses VFP register arguments,fhog.o does not</div></pre></td></tr></table></figure></p>
+<p>(3)、然而并没有那么顺利，报一堆错类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error dssttest uses VFP register arguments,fhog.o does not</div></pre></td></tr></table></figure></p>
 <p>解决方案：这个错误我也没搞明白，大致情况是系统哪里配置了使用硬件浮点运算单元，而此处被配置为软浮，所以报错，搜到网上解决方案是将/mkspecs/devices/linux-imx6-g++/qmake.conf里DISTRO_OPTS+=hard-float这句屏蔽掉，然而照做后并没有解决，所以我将QMAKE_CXXFLAGS += -mfloat-abi=softfp -mfpu=neon改为QMAKE_CXXFLAGS += -mfloat-abi=hard -mfpu=neon就OK了。有硬解为何还要用软解呢？不知道NEON是否一定需要使用软解，反正只有改成硬解才能顺利编译。</p>
-<p>(4)继续编译，报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;_mm_rsqrt_ps&apos; was not declared in this scope</div></pre></td></tr></table></figure></p>
+<p>(4)、继续编译，报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;_mm_rsqrt_ps&apos; was not declared in this scope</div></pre></td></tr></table></figure></p>
 <p>所以说那位写精简版源码的大佬显然并没有在arm下跑过，甚至大概就没有编译~原因是那会参考资料[3]那个工作还没有实现_mm_rsqrt_ps这个函数，尽管这位大佬在20天前更新过一次源码，但精力应该是放在了改进跟踪效果上（因为另一位博主说用过前一版的源码，效果并不理想，据其粗看这次更新主要调整了一些内部参数）。而SSE2NEON这个工作其实已经做出了更新，包含了更多的SSE的NEON实现。最近的一次更新就在4天前，目前支持95个SSE intrinsics函数,其中39个在arm上做了完整的测试，其余的实际效果还待测试。言下之意就是其余的并不保证没有bug。注意到最新的一次commits提到有些指令在32位机器上运行会有问题，而64位机器运行正常，目前fix了一部分。这个工作还需要也值得继续关注。<br>解决方案：用最新的SSE2NEON.h进行替换。</p>
 <p>这一次总算能顺利编译通过了，满心欢喜地点run，然而，在选定跟踪目标后就挂了，好气啊！大概是32位机器的锅吧~得找个64位的机器来试试，嗯，想起来了，室友的荣耀7就是~2333~事实证明64位机器是可行的！</p>
 <h2 id="移植过程及所遇问题-1"><a href="#移植过程及所遇问题-1" class="headerlink" title="移植过程及所遇问题"></a><strong>移植过程及所遇问题</strong></h2><ul>
-<li><a href="http://stackoverflow.com/questions/31253870/caffe-opencv-error" title="opencv err" target="_blank" rel="external">Caffe: opencv error - Stack Overflow</a></li>
-<li><a href="http://stackoverflow.com/questions/12335848/opencv-program-compile-error-libopencv-core-so-2-4-cannot-open-shared-object-f" target="_blank" rel="external">openCV program compile error “libopencv_core.so.2.4: cannot open shared object file: No such file or directory” in ubuntu 12.04 - Stack Overflow</a></li>
+<li><a href="http://blog.csdn.net/jacke121/article/details/54562570" target="_blank" rel="external">目标跟踪学习算法DSST</a>（这位博主DSST分类下的几篇博文以及所引用的其他博主的相关博文都不错）</li>
+<li><a href="https://github.com/TuringKi/fDSST_cpp" target="_blank" rel="external">TuringKi/fDSST_cpp - github</a></li>
+<li><a href="https://github.com/jratcliff63367/sse2neon" target="_blank" rel="external">sse2neon - github</a></li>
 </ul>
 
       
