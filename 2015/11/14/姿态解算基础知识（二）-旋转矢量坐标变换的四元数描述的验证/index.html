@@ -18,7 +18,7 @@
 <meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/yunsuan.png">
 <meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/siyuanshuchen.png">
 <meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/tuidao.jpg">
-<meta property="og:updated_time" content="2017-04-03T12:02:19.457Z">
+<meta property="og:updated_time" content="2017-04-03T12:04:33.544Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="姿态解算基础知识（二）-旋转矢量坐标变换的四元数描述的验证">
 <meta name="twitter:description" content="补充下四元数的知识及上篇博文提到的旋转矢量坐标变换的四元数描述的推导过程。">
@@ -177,7 +177,7 @@ var _hmt = _hmt || [];
 <p><strong>四元数的范数</strong>定义为四个元素的平方和，且范数为1时称为规范化的四元数。</p>
 <p>理解四元数描述坐标变换，上述知识已够，更多参见科学出版社的《惯性器件与惯性导航系统》23页。</p>
 <p>假定某矢量绕通过O点的某轴逆时针转动一个角度θ，则与该矢量固连的动坐标系和参考坐标系间的变换四元数为：</p>
-<pre><code>**q**=cos(θ/2)+sin(θ/2)cosα**i** + sin(θ/2)cosβ**j**+ sin(θ/2)cosγ**k**
+<pre><code>q=cos(θ/2)+sin(θ/2)cosα·i + sin(θ/2)cosβ·j+ sin(θ/2)cosγ·k
 </code></pre><p>通常称其为四元数的三角形式，也称<strong>特征四元数</strong>，其范数为1，在导航应用中一般所应用的四元数均为特征四元数。其标量部分cos(θ/2)表示了转角一半的余弦值，矢量部分则体现了转动轴的方向，<strong>α、β、γ是转动轴与参考坐标系各轴间的夹角</strong>。</p>
 <p><strong>旋转矢量坐标变换的四元数描述</strong>为：r’=qrq<em>或r=q</em>r’q<br>下面是旋转矢量坐标变换的四元数描述公式的验证过程：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/tuidao.jpg" alt="tuidao" align="center/"></p>
 
@@ -335,7 +335,7 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">opencv</a>
+                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -343,11 +343,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">QT</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+                <a href="javascript:void(0)" class="js-tag color2">opencv</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -356,6 +352,10 @@ var _hmt = _hmt || [];
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">多旋翼</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">QT</a>
               </li>
             
             <div class="clearfix"></div>
