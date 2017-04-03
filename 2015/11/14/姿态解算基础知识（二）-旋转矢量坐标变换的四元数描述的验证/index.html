@@ -14,14 +14,15 @@
 <meta property="og:url" content="http://sheng-blog.iego.cn/2015/11/14/姿态解算基础知识（二）-旋转矢量坐标变换的四元数描述的验证/index.html">
 <meta property="og:site_name" content="胜">
 <meta property="og:description" content="补充下四元数的知识及上篇博文提到的旋转矢量坐标变换的四元数描述的推导过程。">
-<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/zitai1.jpg">
-<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/zitai2.jpg">
-<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/zitai3.jpg">
-<meta property="og:updated_time" content="2017-04-03T10:33:29.026Z">
+<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/siyuanshu.png">
+<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/yunsuan.png">
+<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/siyuanshuchen.png">
+<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/tuidao.jpg">
+<meta property="og:updated_time" content="2017-04-03T12:02:19.457Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="姿态解算基础知识（二）-旋转矢量坐标变换的四元数描述的验证">
 <meta name="twitter:description" content="补充下四元数的知识及上篇博文提到的旋转矢量坐标变换的四元数描述的推导过程。">
-<meta name="twitter:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/zitai1.jpg">
+<meta name="twitter:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/siyuanshu.png">
   
   
     <link rel="icon" href="/img/site/icon.jpg">
@@ -171,11 +172,14 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>补充下四元数的知识及上篇博文提到的旋转矢量坐标变换的四元数描述的推导过程。<br><a id="more"></a></p>
-<p> 四元数q可以看出由一个实数和一个三维矢量组成：</p>
-<p>惯性导航系统分平台式惯性导航系统和捷联式惯性导航系统。平台式是有一个由陀螺仪控制的实体平台保证加速度计能始终测得在导航坐标系下的各轴加速度值，而载体姿态通过读取平台刻度即可获得。而捷联式惯性导航系统则没有实体平台，加计测得的是载体坐标系下的各轴加速度，我们需要通过数学办法进行坐标系变换将加计的数据转换成导航坐标系下的各轴加速度值，相当于用数学办法构建一个“平台”。</p>
-<p>SO，先来解决坐标变换的表示。先从二维平面OXY坐标系讲起：当OXY逆时针旋转α度时，同一矢量R在不同坐标下的表示：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/zitai1.jpg" alt="cpuinfo" align="center/"><br>根据方向余弦矩阵我们可以得到三个姿态角<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/zitai2.jpg" alt="cpuinfo" align="center/"><br>方向余弦矩阵参与运算的话计算量比较大，所以我们用四元数进行坐标变换的运算（四元数的概念性质自行百度，或者下篇补充吧），它与方向余弦矩阵描述的关系及变换公式的推导如下：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/zitai3.jpg" alt="cpuinfo" align="center/"><br>事实上四轴姿态解算就加计和陀螺的融合而言要用到的是导航坐标系到载体坐标系的变换，推导过程一样。</p>
-<p>我们追求的并不是解决问题，而应是更好地解决问题，没有扎实的基础保障，就无法俯视我们要解决的问题，找到最好的办法。尽管不俯视，一样能解决这个问题，但却心虚。一个项目能用到多少知识？可以认为很多也可以认为很少，多，那是基础牢，做得细致。少，那仅是为了解决问题而解决问题。这段话写得乱，深夜随想，希望未来的自己能懂。从现在起，三年时间，认真沉淀，不急躁，不急功近利！</p>
+        <p>补充下四元数的知识及上篇博文提到的旋转矢量坐标变换的四元数描述的推导过程。<br><a id="more"></a><br>四元数<strong>q</strong>可以看出由一个实数和一个三维矢量组成：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/siyuanshu.png" alt="siyuanshu" align="center/"><br>i,j,k为三维空间单位矢量，它们服从如下运算公式：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/yunsuan.png" alt="yunsuan" align="center/"><br>四元数的加减运算类似复数加减运算，相应系数加减即可。四元数间的乘法类似多项式的乘法，q(p1,p2,p3,p4)乘r(u0,u1,u2,u3)写成矩阵形式等于:<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/siyuanshuchen.png" alt="siyuanshuchen" align="center/"><br>注意两者除去第一行和第一列的核是不同的，所以四元数的乘法不满足交换律</p>
+<p><strong>共轭四元数</strong>即实数部分相同，矢量部分相反q*表示q的共轭四元数；</p>
+<p><strong>四元数的范数</strong>定义为四个元素的平方和，且范数为1时称为规范化的四元数。</p>
+<p>理解四元数描述坐标变换，上述知识已够，更多参见科学出版社的《惯性器件与惯性导航系统》23页。</p>
+<p>假定某矢量绕通过O点的某轴逆时针转动一个角度θ，则与该矢量固连的动坐标系和参考坐标系间的变换四元数为：</p>
+<pre><code>**q**=cos(θ/2)+sin(θ/2)cosα**i** + sin(θ/2)cosβ**j**+ sin(θ/2)cosγ**k**
+</code></pre><p>通常称其为四元数的三角形式，也称<strong>特征四元数</strong>，其范数为1，在导航应用中一般所应用的四元数均为特征四元数。其标量部分cos(θ/2)表示了转角一半的余弦值，矢量部分则体现了转动轴的方向，<strong>α、β、γ是转动轴与参考坐标系各轴间的夹角</strong>。</p>
+<p><strong>旋转矢量坐标变换的四元数描述</strong>为：r’=qrq<em>或r=q</em>r’q<br>下面是旋转矢量坐标变换的四元数描述公式的验证过程：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/tuidao.jpg" alt="tuidao" align="center/"></p>
 
       
 
@@ -339,11 +343,11 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+                <a href="javascript:void(0)" class="js-tag color3">QT</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">QT</a>
+                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
               </li>
              
               <li class="article-tag-list-item">
