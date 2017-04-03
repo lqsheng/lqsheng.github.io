@@ -6,17 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://sheng-blog.iego.cn">
-  <title>Tag: opencv4android | 胜</title>
+  <title>姿态解算知识（三）-陀螺仪加速度计6轴数据融合 | 胜</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="sheng&apos;s blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="胜">
-<meta property="og:url" content="http://sheng-blog.iego.cn/tags/opencv4android/index.html">
+  <meta name="description" content="这么久的惯导总算是没白看，加上一篇博客的指点，这两天把Mahony的九轴数据融合算法看懂了。可惜第二版硬件还没到，磁力计用不了，没法验证效果~今天先总结下陀螺仪和加速度计的六轴数据融合。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="姿态解算知识（三）-陀螺仪加速度计6轴数据融合">
+<meta property="og:url" content="http://sheng-blog.iego.cn/2015/11/16/姿态解算知识（三）-陀螺仪加速度计6轴数据融合/index.html">
 <meta property="og:site_name" content="胜">
-<meta property="og:description" content="sheng&apos;s blog">
+<meta property="og:description" content="这么久的惯导总算是没白看，加上一篇博客的指点，这两天把Mahony的九轴数据融合算法看懂了。可惜第二版硬件还没到，磁力计用不了，没法验证效果~今天先总结下陀螺仪和加速度计的六轴数据融合。">
+<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/quad4.jpg">
+<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/quad8.png">
+<meta property="og:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/quad5.png">
+<meta property="og:updated_time" content="2017-04-03T11:05:03.271Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="胜">
-<meta name="twitter:description" content="sheng&apos;s blog">
+<meta name="twitter:title" content="姿态解算知识（三）-陀螺仪加速度计6轴数据融合">
+<meta name="twitter:description" content="这么久的惯导总算是没白看，加上一篇博客的指点，这两天把Mahony的九轴数据融合算法看懂了。可惜第二版硬件还没到，磁力计用不了，没法验证效果~今天先总结下陀螺仪和加速度计的六轴数据融合。">
+<meta name="twitter:image" content="http://123.206.218.130/img/blog/PCB_quadrotor/quad4.jpg">
   
   
     <link rel="icon" href="/img/site/icon.jpg">
@@ -146,102 +151,105 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-姿态解算知识（三）-陀螺仪加速度计6轴数据融合" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/04/02/DSST折腾笔记（二）：在安卓手机下的移植/" class="archive-article-date">
-  	<time datetime="2017-04-02T14:10:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-02</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/02/DSST折腾笔记（二）：在安卓手机下的移植/">DSST折腾笔记（二）：在安卓手机下的移植</a>
+    <h1 class="article-title" itemprop="name">
+      姿态解算知识（三）-陀螺仪加速度计6轴数据融合
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2015/11/16/姿态解算知识（三）-陀螺仪加速度计6轴数据融合/" class="archive-article-date">
+  	<time datetime="2015-11-15T17:50:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2015-11-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p> 这么久的惯导总算是没白看，加上一篇博客的指点，这两天把Mahony的九轴数据融合算法看懂了。可惜第二版硬件还没到，磁力计用不了，没法验证效果~今天先总结下陀螺仪和加速度计的六轴数据融合。<br><a id="more"></a></p>
+<p>加计和陀螺仪都能计算出姿态，但为何要对它们融合呢，是因为加速度计对振动之类的扰动很敏感，但长期数据计算出的姿态可信，而陀螺仪虽然对振动这些不敏感，但长期使用陀螺仪会出现漂移，因此我们要进行互补，短期相信陀螺，长期相信加计。不过，其实加计无法对航向角进行修正，修正航向角需要磁力计，也就是下次要总结的9轴数据融合。</p>
+<p>在融合之前先要对传感器原始数据进行一些处理。理想情况下，加速度计水平放置时，XY轴应该是0输出的，仅Z轴输出1个G，因此，我们需要对加速度计进行XY轴的零点校准（注意Z轴可不能一起校准去了~）；同样的，陀螺仪在水平静止放置时各轴输出应为0，因此需对陀螺仪进行三轴的校准。方法就是把机体标准水平静止放置时采集它个一两百次数据求个平均作为校准值保存起来喽，然后工作状态下各轴输出的数据就是采集来的数据减去校准值喽。仅此还不够，陀螺仪不进行滤波还可以接受，但加速度计噪声比较大，所以至少也得来个滑动窗口滤波，我用了20深度的滑动窗口，数据还是有很大波动，不过最后计算出的姿态角只有0.3度左右的抖动（我看大家一般都是建议8深度就够了，所以单滑动窗口滤波效果是没法做到更好了，可以考虑加个卡尔曼滤波？还没研究，不过这样处理器运算量就上去了）。（11.28补充：后面改对加计使用8深度滑动滤波，陀螺仪进行16阶凯撒窗滤波后只有0.1不到的波动，不过凯撒滤波参数的整定还不会，用的别人整定的一组参数，近期继续研究）。滤波效果如图：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/quad4.jpg" alt="quad4" align="center/"><br>接下来上六轴数据融合代码：（代码来源网络，我在前人的基础上再加些注释，稍作改动）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">#defineKp 10.0f                        // 这里的KpKi是用于调整加速度计修正陀螺仪的速度</div><div class="line">#defineKi 0.008f                        </div><div class="line">#definehalfT 0.001f             // 采样周期的一半，用于求解四元数微分方程时计算角增量</div><div class="line">floatq0 = 1, q1 = 0, q2 = 0, q3 = 0;    // 初始姿态四元数，由上篇博文提到的变换四元数公式得来</div><div class="line">floatexInt = 0, eyInt = 0, ezInt = 0;    //当前加计测得的重力加速度在三轴上的分量</div><div class="line">                                //与用当前姿态计算得来的重力在三轴上的分量的误差的积分</div><div class="line">voidIMUupdate(float gx, float gy, float gz, float ax, float ay, float az)//g表陀螺仪，a表加计</div><div class="line">&#123;</div><div class="line"></div><div class="line">  float q0temp,q1temp,q2temp,q3temp;//四元数暂存变量，求解微分方程时要用</div><div class="line">  float norm; //矢量的模或四元数的范数</div><div class="line">  float vx, vy, vz;//当前姿态计算得来的重力在三轴上的分量</div><div class="line">  float ex, ey, ez;//当前加计测得的重力加速度在三轴上的分量</div><div class="line">              //与用当前姿态计算得来的重力在三轴上的分量的误差</div><div class="line"></div><div class="line">  // 先把这些用得到的值算好</div><div class="line">  float q0q0 = q0*q0;</div><div class="line">  float q0q1 = q0*q1;</div><div class="line">  float q0q2 = q0*q2;</div><div class="line">  float q1q1 = q1*q1;</div><div class="line">  float q1q3 = q1*q3;</div><div class="line">  float q2q2 = q2*q2;</div><div class="line">  float q2q3 = q2*q3;</div><div class="line">  float q3q3 = q3*q3;      </div><div class="line">  if(ax*ay*az==0)//加计处于自由落体状态时不进行姿态解算，因为会产生分母无穷大的情况</div><div class="line">        return;</div><div class="line">  norm = sqrt(ax*ax + ay*ay + az*az);//单位化加速度计，</div><div class="line">  ax = ax /norm;// 这样变更了量程也不需要修改KP参数，因为这里归一化了</div><div class="line">  ay = ay / norm;</div><div class="line">  az = az / norm;</div><div class="line">  //用当前姿态计算出重力在三个轴上的分量，</div><div class="line">  //参考坐标n系转化到载体坐标b系的用四元数表示的方向余弦矩阵第三列即是（博文一中有提到）</div><div class="line">  vx = 2*(q1q3 - q0q2);        </div><div class="line">  vy = 2*(q0q1 + q2q3);</div><div class="line">  vz = q0q0 - q1q1 - q2q2 + q3q3 ;</div><div class="line">  //计算测得的重力与计算得重力间的误差，向量外积可以表示这一误差</div><div class="line">  //原因我理解是因为两个向量是单位向量且sin0等于0</div><div class="line">  //不过要是夹角是180度呢~这个还没理解</div><div class="line">  ex = (ay*vz - az*vy) ;                                                                  </div><div class="line">  ey = (az*vx - ax*vz) ;</div><div class="line">  ez = (ax*vy - ay*vx) ;</div><div class="line"></div><div class="line">  exInt = exInt + ex * Ki;                                           //对误差进行积分</div><div class="line">  eyInt = eyInt + ey * Ki;</div><div class="line">  ezInt = ezInt + ez * Ki;</div><div class="line">  // adjusted gyroscope measurements</div><div class="line">  gx = gx + Kp*ex + exInt;  //将误差PI后补偿到陀螺仪，即补偿零点漂移</div><div class="line">  gy = gy + Kp*ey + eyInt;</div><div class="line">  gz = gz + Kp*ez + ezInt;    //这里的gz由于没有观测者进行矫正会产生漂移，表现出来的就是积分自增或自减</div><div class="line">  //下面进行姿态的更新，也就是四元数微分方程的求解</div><div class="line">  q0temp=q0;//暂存当前值用于计算</div><div class="line">  q1temp=q1;//网上传的这份算法大多没有注意这个问题，在此更正</div><div class="line">  q2temp=q2;</div><div class="line">  q3temp=q3;</div><div class="line">  //采用一阶毕卡解法，相关知识可参见《惯性器件与惯性导航系统》P212</div><div class="line">  q0 = q0temp + (-q1temp*gx - q2temp*gy -q3temp*gz)*halfT;</div><div class="line">  q1 = q1temp + (q0temp*gx + q2temp*gz -q3temp*gy)*halfT;</div><div class="line">  q2 = q2temp + (q0temp*gy - q1temp*gz +q3temp*gx)*halfT;</div><div class="line">  q3 = q3temp + (q0temp*gz + q1temp*gy -q2temp*gx)*halfT;</div><div class="line">  //单位化四元数在空间旋转时不会拉伸，仅有旋转角度，这类似线性代数里的正交变换</div><div class="line">  norm = sqrt(q0*q0 + q1*q1 + q2*q2 + q3*q3);</div><div class="line">  q0 = q0 / norm;</div><div class="line">  q1 = q1 / norm;</div><div class="line">  q2 = q2 / norm;</div><div class="line">  q3 = q3 / norm;</div><div class="line">  //四元数到欧拉角的转换，公式推导见博文一</div><div class="line">  //其中YAW航向角由于加速度计对其没有修正作用，因此此处直接用陀螺仪积分代替</div><div class="line">  Q_ANGLE.Z = GYRO_I.Z; // yaw</div><div class="line">  Q_ANGLE.Y = asin(-2 * q1 * q3 + 2 * q0* q2)*57.3; // pitch</div><div class="line">  Q_ANGLE.X = atan2(2 * q2 * q3 + 2 * q0 * q1,-2 * q1 * q1 - 2 * q2* q2 + 1)* 57.3; // roll</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上述代码图解：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/quad8.png" alt="quad8" align="center/"><br>新浪博客插代码好不方便，格式全乱了。最后忘了说了，千万别忘了传入的陀螺仪数据需乘一个系数将其转化为弧度制角速度！！！<br>补充，梯度下降法六轴融合图解：<br><img src="http://123.206.218.130/img/blog/PCB_quadrotor/quad5.png" alt="quad5" align="center/"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">opencv4android</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">tracking</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">多旋翼</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/02/24/Android studio2.2配置opencv for android（CMake方式）/" class="archive-article-date">
-  	<time datetime="2017-02-24T11:06:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-24</time>
-</a>
-        </div>
-    	 
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/02/24/Android studio2.2配置opencv for android（CMake方式）/">Android studio2.2配置opencv for android（CMake方式）</a>
-    </h1>
+    <a href="/2015/11/22/小四轴9轴数据融合成功/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          小四轴9轴数据融合成功
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/11/14/姿态解算基础知识（二）-旋转矢量坐标变换的四元数描述的验证/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">姿态解算基础知识（二）-旋转矢量坐标变换的四元数描述的验证</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+    <div class="duoshuo"></div>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">opencv4android</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+<section id="comments">
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'sheng-1'; // required: replace example with your forum shortname
 
-    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
 
 
           </div>
@@ -264,9 +272,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",
