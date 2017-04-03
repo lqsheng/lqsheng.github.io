@@ -247,7 +247,7 @@ var _hmt = _hmt || [];
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">opencv</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">opencv4android</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
@@ -487,6 +487,70 @@ var _hmt = _hmt || [];
 
 
   
+    <article id="post-ROS的开机自启脚本编写" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/15/ROS的开机自启脚本编写/">ROS的开机自启脚本编写</a>
+    </h1>
+  
+
+        
+        <a href="/2017/02/15/ROS的开机自启脚本编写/" class="archive-article-date">
+  	<time datetime="2017-02-15T11:33:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用ROS开发好一个机器人后，在使用的时候每次都要先连上机器的网络再roslaunch太麻烦了，按产品的思路应该是按下电源键就OK才对。此外，若是还有上位机连着进行状态监视，万一主程序挂了，或者修改了程序要重新编译运行，那上位机这边的节点也要重新开一遍，太麻烦了吧。所以最好是在roslaunch之前单独开好一个roscore，这样修改下位机程序，上位机这边就不用重新开也能工作了。那就意味着机器上电后，我们要分两次ssh上去，一个开core，一个roslaunch。WTF！这种重复性的操作还是交给机器自己完成吧！（这篇博文的内容当时只用txt记录了过程，时间也有点久了，就保持原样吧<del>~懒得排版</del>~）<br>
+        
+          <a class="article-more-a" href="/2017/02/15/ROS的开机自启脚本编写/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">ROS</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/02/15/ROS的开机自启脚本编写/">阅读全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
   
 
 
@@ -568,6 +632,10 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">opencv</a>
               </li>
              
@@ -580,7 +648,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+                <a href="javascript:void(0)" class="js-tag color4">ROS</a>
               </li>
             
             <div class="clearfix"></div>

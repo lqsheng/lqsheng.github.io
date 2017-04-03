@@ -6,17 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://sheng-blog.iego.cn">
-  <title>Tag: opencv | 胜</title>
+  <title>ROS的开机自启脚本编写 | 胜</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="sheng&apos;s blog">
-<meta property="og:type" content="website">
-<meta property="og:title" content="胜">
-<meta property="og:url" content="http://sheng-blog.iego.cn/tags/opencv/index.html">
+  <meta name="description" content="用ROS开发好一个机器人后，在使用的时候每次都要先连上机器的网络再roslaunch太麻烦了，按产品的思路应该是按下电源键就OK才对。此外，若是还有上位机连着进行状态监视，万一主程序挂了，或者修改了程序要重新编译运行，那上位机这边的节点也要重新开一遍，太麻烦了吧。所以最好是在roslaunch之前单独开好一个roscore，这样修改下位机程序，上位机这边就不用重新开也能工作了。那就意味着机器上电后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ROS的开机自启脚本编写">
+<meta property="og:url" content="http://sheng-blog.iego.cn/2017/02/15/ROS的开机自启脚本编写/index.html">
 <meta property="og:site_name" content="胜">
-<meta property="og:description" content="sheng&apos;s blog">
+<meta property="og:description" content="用ROS开发好一个机器人后，在使用的时候每次都要先连上机器的网络再roslaunch太麻烦了，按产品的思路应该是按下电源键就OK才对。此外，若是还有上位机连着进行状态监视，万一主程序挂了，或者修改了程序要重新编译运行，那上位机这边的节点也要重新开一遍，太麻烦了吧。所以最好是在roslaunch之前单独开好一个roscore，这样修改下位机程序，上位机这边就不用重新开也能工作了。那就意味着机器上电后">
+<meta property="og:updated_time" content="2017-04-03T07:38:52.251Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="胜">
-<meta name="twitter:description" content="sheng&apos;s blog">
+<meta name="twitter:title" content="ROS的开机自启脚本编写">
+<meta name="twitter:description" content="用ROS开发好一个机器人后，在使用的时候每次都要先连上机器的网络再roslaunch太麻烦了，按产品的思路应该是按下电源键就OK才对。此外，若是还有上位机连着进行状态监视，万一主程序挂了，或者修改了程序要重新编译运行，那上位机这边的节点也要重新开一遍，太麻烦了吧。所以最好是在roslaunch之前单独开好一个roscore，这样修改下位机程序，上位机这边就不用重新开也能工作了。那就意味着机器上电后">
   
   
     <link rel="icon" href="/img/site/icon.jpg">
@@ -146,106 +147,109 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-ROS的开机自启脚本编写" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/04/02/DSST折腾笔记（一）：树莓派3上的移植/" class="archive-article-date">
-  	<time datetime="2017-04-02T02:10:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-04-02</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/04/02/DSST折腾笔记（一）：树莓派3上的移植/">DSST折腾笔记（一）：树莓派3上的移植</a>
+    <h1 class="article-title" itemprop="name">
+      ROS的开机自启脚本编写
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/02/15/ROS的开机自启脚本编写/" class="archive-article-date">
+  	<time datetime="2017-02-15T11:33:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用ROS开发好一个机器人后，在使用的时候每次都要先连上机器的网络再roslaunch太麻烦了，按产品的思路应该是按下电源键就OK才对。此外，若是还有上位机连着进行状态监视，万一主程序挂了，或者修改了程序要重新编译运行，那上位机这边的节点也要重新开一遍，太麻烦了吧。所以最好是在roslaunch之前单独开好一个roscore，这样修改下位机程序，上位机这边就不用重新开也能工作了。那就意味着机器上电后，我们要分两次ssh上去，一个开core，一个roslaunch。WTF！这种重复性的操作还是交给机器自己完成吧！（这篇博文的内容当时只用txt记录了过程，时间也有点久了，就保持原样吧<del>~懒得排版</del>~）<br><a id="more"></a></p>
+<h2 id="笔记"><a href="#笔记" class="headerlink" title="笔记"></a><strong>笔记</strong></h2><p>1、联网检测代码段：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">while true;do</div><div class="line">ping -w 1 -c 1 192.168.1.132&gt;/dev/null</div><div class="line">ret=$?</div><div class="line">if [ $ret -eq 0 ]</div><div class="line">then printf &quot;$prefix is up&quot;</div><div class="line">break;</div><div class="line">else printf &quot;$prefix is down \n&quot; </div><div class="line">fi</div><div class="line">done</div></pre></td></tr></table></figure></p>
+<p>2、在dash里搜索“启动应用程序”里将脚本设置为开机自启，脚本将在开机后后台运行，在命令前加上gnome-terminal -x可以实现在终端运行，但是比较建议在脚本里需要在终端执行的地方加这个指令。</p>
+<p>3、这种方式的开机自启需要系统打开图形界面，比如树莓派的Ubuntu mate系统里确保graphical enable，但具体有没有显示屏存在并不重要。另外需要注意的是如果安装了xrdp这种远程桌面的话，在同一个IP开多个窗口远程登录看到的是同一块桌面，而不同IP则看到的是不同桌面，我们设置的开机启动程序在每一块桌面启动时都会被执行！而vnc则有且仅有一块桌面，与HDMI输出保持一致。</p>
+<p>4、在同一个脚本里仅能执行一个不return的指令，比如在同一个脚本里先roscore再roslaunch是不行的，实际效果是只执行到roscore,除非ctrl+c结束core,脚本才会继续往下执行。因此，若要启动一个core和一个roslaunch需要添加两个开机启动脚本。</p>
+<p>5、强大的screen指令：前面提到脚本在终端执行，但是在随后我们ssh后却无法操控该终端，此时screen指令可以解决这个问题。新建一个screen再在里面操作即可方便后续attach回去，脚本里gnome-terminal -x screen -S windowname /the/path/of/the/shell 即可，分成两条写{gnome-terminal -x screen -S windowname接/the/path/of/the/shell}是不行的。</p>
+<p>6、使用上面这种开screen就运行脚本的方式有一个问题，比如roslaunch里某环节报错挂了，screen会话将直接被终止，我们无从获知程序报错的原因。因此不能按上述命令写，而应将新建screen会话和执行脚本分开，正确的方式是：gnome-terminal -x screen -S windowname接gnome-terminal -x screen -S windowname -X screen /the/path/of/the/shell。其中screen的 -X 参数意思是指定在哪个screen中运行某个指令。</p>
+<p>7、尽管我们加了gnome-terminal -x指定了后面的命令需在一个终端里执行，但screen 后紧跟的指令执行的时机是在终端执行.bashrc文件之前，所以我们需要在脚本里自行source一些ROS配置文件，不要忘了export ROS_MASTER_URI=<a href="http://pi:11311" target="_blank" rel="external">http://pi:11311</a><br>export ROS_IP=10.42.0.64这两个环境变量，否则其他计算机将无法与其正常通信。正是这一feature使得我们若要启动一个core和一个roslaunch的话需要用到四个脚本！</p>
+<p>8、必须保证先开core，因此可在launch的脚本里加延时，延时不能太短，否则core还没开好就roslaunch了同样会死得很难看，我看到的现象是两个窗口里都在反复restart。目前使用25s延时，差不多。20s有点险。</p>
+<h2 id="当前使用的脚本"><a href="#当前使用的脚本" class="headerlink" title="当前使用的脚本"></a><strong>当前使用的脚本</strong></h2><p>newscreen_core<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash </div><div class="line">while true;do</div><div class="line">ping -w 1 -c 1 10.42.0.1&gt;/dev/null</div><div class="line">ret=$?</div><div class="line">if [ $ret -eq 0 ]</div><div class="line">then printf &quot;$prefix is up&quot;</div><div class="line">break;</div><div class="line">else printf &quot;$prefix is down \n&quot; </div><div class="line">fi</div><div class="line">done</div><div class="line">mate-terminal -x screen -S core ~/auto_runing/core_ros</div><div class="line">#mate-terminal -x screen -S core -X screen ~/auto_runing/core_ros</div></pre></td></tr></table></figure></p>
+<p>core_ros<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash </div><div class="line">source /opt/ros/kinetic/setup.bash  </div><div class="line">source /home/pi/.bashrc   </div><div class="line">source /home/pi/catkin_ws/devel/setup.bash  </div><div class="line">cd /home/pi/catkin_ws</div><div class="line">export ROS_MASTER_URI=http://10.42.0.1:11311</div><div class="line">export ROS_IP=10.42.0.1</div><div class="line">roscore</div></pre></td></tr></table></figure></p>
+<p>newscreen_quad<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash </div><div class="line">while true;do</div><div class="line">ping -w 1 -c 1 10.42.0.1&gt;/dev/null</div><div class="line">ret=$?</div><div class="line">if [ $ret -eq 0 ]</div><div class="line">then printf &quot;$prefix is up&quot;</div><div class="line">break;</div><div class="line">else printf &quot;$prefix is down \n&quot; </div><div class="line">fi</div><div class="line">done</div><div class="line">sleep 25s</div><div class="line">mate-terminal -x screen -S quad</div><div class="line">mate-terminal -x screen -S quad -X screen ~/auto_runing/quadrotor</div></pre></td></tr></table></figure></p>
+<p>quadrotor<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash </div><div class="line">source /opt/ros/kinetic/setup.bash  </div><div class="line">source /home/pi/.bashrc   </div><div class="line">source /home/pi/catkin_ws/devel/setup.bash  </div><div class="line">cd /home/pi/catkin_ws</div><div class="line">export ROS_MASTER_URI=http://10.42.0.1:11311</div><div class="line">export ROS_IP=10.42.0.1</div><div class="line">roslaunch planning start_test.launch</div></pre></td></tr></table></figure></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">opencv</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">tracking</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">ROS</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/03/18/QT使用ROS自带的opencv新建使用OPENCV的QT工程（None ROS）/" class="archive-article-date">
-  	<time datetime="2017-03-18T11:33:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-18</time>
-</a>
-        </div>
-    	 
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/03/18/QT使用ROS自带的opencv新建使用OPENCV的QT工程（None ROS）/">QT使用ROS自带的opencv新建使用OPENCV的QT工程（None ROS）</a>
-    </h1>
+    <a href="/2017/02/24/Android studio2.2配置opencv for android（CMake方式）/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Android studio2.2配置opencv for android（CMake方式）
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+
+
+
+
+
+  
+    <div class="duoshuo"></div>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">opencv</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">QT</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+<section id="comments">
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'sheng-1'; // required: replace example with your forum shortname
 
-    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
 
 
           </div>
@@ -268,9 +272,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",

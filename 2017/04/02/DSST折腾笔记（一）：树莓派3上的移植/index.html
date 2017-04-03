@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="胜">
 <meta property="og:description" content="DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！T">
 <meta property="og:image" content="http://123.206.218.130/img/blog/170402/neon.png">
-<meta property="og:updated_time" content="2017-04-02T16:24:38.539Z">
+<meta property="og:updated_time" content="2017-04-03T07:10:56.754Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DSST折腾笔记（一）：树莓派3上的移植">
 <meta name="twitter:description" content="DSST（文章全名Accurate Scale Estimation for Robust Visual Tracking）是视觉目标跟踪VOT2014竞赛的冠军。实测实时性好，跟踪效果着实很赞(当然就跟踪效果而言还是逊色于TLD，在一次测试里，我起身把待洗衣服拿去洗衣房，然后回来，TLD还是准确地重新把我的脸给找了出来，继续追踪！这个过程少说也有四五分钟，这么长时间的目标丢失，TLD居然没挂！T">
@@ -182,9 +182,10 @@ var _hmt = _hmt || [];
 <p>解决方案：apt-get install gcc-multilib</p>
 <p>(2)、既然现在是arm平台下，那自然要把NEON的头文件包含进来，如图，注释掉sse.hpp里的emmintrin.h,再将SSE2NEON.h include进来。好像OK了？编译下喽~<br><img src="http://123.206.218.130/img/blog/170402/neon.png" alt="SSE2NEON" align="center/"><br>一堆报错~最亮眼的是这个：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#error You must enable NEON instructions(e.g.-mfloat-abi=softfp -mfpu=neon)to use arm_neon.h</div></pre></td></tr></table></figure></p>
 <p>解决方案：人家已经告诉你喽，在工程配置文件里添加QMAKE_CXXFLAGS += -mfloat-abi=softfp -mfpu=neon</p>
-<p>(3)、然而并没有那么顺利，报一堆错类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error dssttest uses VFP register arguments,fhog.o does not</div></pre></td></tr></table></figure></p>
+<p>(3)、中间还有一个报错大致意思是在std这个namespace里没有fmax和fmin函数（写完博文翻看当时的移植笔记才发现漏了这个问题，懒得复现了。）<br>解决方案：去掉std::</p>
+<p>(4)、然而并没有那么顺利，报一堆错类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error dssttest uses VFP register arguments,fhog.o does not</div></pre></td></tr></table></figure></p>
 <p>解决方案：这个错误我也没搞明白，大致情况是系统哪里配置了使用硬件浮点运算单元，而此处被配置为软浮，所以报错，搜到网上解决方案是将/mkspecs/devices/linux-imx6-g++/qmake.conf里DISTRO_OPTS+=hard-float这句屏蔽掉，然而照做后并没有解决，所以我将QMAKE_CXXFLAGS += -mfloat-abi=softfp -mfpu=neon改为QMAKE_CXXFLAGS += -mfloat-abi=hard -mfpu=neon就OK了。有硬解为何还要用软解呢？不知道NEON是否一定需要使用软解，反正只有改成硬解才能顺利编译。</p>
-<p>(4)、继续编译，报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;_mm_rsqrt_ps&apos; was not declared in this scope</div></pre></td></tr></table></figure></p>
+<p>(5)、继续编译，报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;_mm_rsqrt_ps&apos; was not declared in this scope</div></pre></td></tr></table></figure></p>
 <p>所以说那位写精简版源码的大佬显然并没有在arm下跑过，甚至大概就没有编译~原因是那会参考资料[3]那个工作还没有实现_mm_rsqrt_ps这个函数，尽管这位大佬在20天前更新过一次源码，但精力应该是放在了改进跟踪效果上（因为另一位博主说用过前一版的源码，效果并不理想，据其粗看这次更新主要调整了一些内部参数）。而SSE2NEON这个工作其实已经做出了更新，包含了更多的SSE的NEON实现。最近的一次更新就在4天前，目前支持95个SSE intrinsics函数,其中39个在arm上做了完整的测试，其余的实际效果还待测试。言下之意就是其余的并不保证没有bug。注意到最新的一次commits提到有些指令在32位机器上运行会有问题，而64位机器运行正常，目前fix了一部分。这个工作还需要也值得继续关注。<br>解决方案：用最新的SSE2NEON.h进行替换。</p>
 <p>这一次总算能顺利编译通过了，满心欢喜地点run，然而，在选定跟踪目标后就挂了，好气啊！大概是32位机器的锅吧~得找个64位的机器来试试，嗯，想起来了，室友的荣耀7就是~2333~事实证明64位机器是可行的！</p>
 <p>查看机器是不是64位机器的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">more /proc/cpuinfo</div></pre></td></tr></table></figure></p>
@@ -387,6 +388,10 @@ var _hmt = _hmt || [];
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">opencv</a>
               </li>
              
@@ -399,7 +404,7 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">opencv4android</a>
+                <a href="javascript:void(0)" class="js-tag color4">ROS</a>
               </li>
             
             <div class="clearfix"></div>
