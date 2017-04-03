@@ -8,24 +8,25 @@
   <link rel="dns-prefetch" href="http://sheng-blog.iego.cn">
   <title>DSST折腾笔记（二）：在安卓手机下的移植 | 胜</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="DSST移植到安卓所需的改动并不多，主要还是编译的配置。
+  <meta name="description" content="NDK环境配置好的基础上移植DSST到安卓所需的改动并不多，主要还是编译的配置。
 博文结构：
 [TOC]">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DSST折腾笔记（二）：在安卓手机下的移植">
 <meta property="og:url" content="http://sheng-blog.iego.cn/2017/04/02/DSST折腾笔记（二）：在安卓手机下的移植/index.html">
 <meta property="og:site_name" content="胜">
-<meta property="og:description" content="DSST移植到安卓所需的改动并不多，主要还是编译的配置。
+<meta property="og:description" content="NDK环境配置好的基础上移植DSST到安卓所需的改动并不多，主要还是编译的配置。
 博文结构：
 [TOC]">
 <meta property="og:image" content="http://123.206.218.130/img/blog/170402/cpuinfo.png">
 <meta property="og:image" content="http://123.206.218.130/img/blog/170402/cpuinfo_arm.png">
 <meta property="og:image" content="http://123.206.218.130/img/blog/170402/dsst4android1.png">
+<meta property="og:image" content="http://123.206.218.130/img/blog/170402/log.png">
 <meta property="og:image" content="http://123.206.218.130/img/blog/170402/tracking.gif">
-<meta property="og:updated_time" content="2017-04-03T05:21:50.628Z">
+<meta property="og:updated_time" content="2017-04-03T06:57:38.854Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DSST折腾笔记（二）：在安卓手机下的移植">
-<meta name="twitter:description" content="DSST移植到安卓所需的改动并不多，主要还是编译的配置。
+<meta name="twitter:description" content="NDK环境配置好的基础上移植DSST到安卓所需的改动并不多，主要还是编译的配置。
 博文结构：
 [TOC]">
 <meta name="twitter:image" content="http://123.206.218.130/img/blog/170402/cpuinfo.png">
@@ -178,7 +179,7 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>DSST移植到安卓所需的改动并不多，主要还是编译的配置。</p>
+        <p>NDK环境配置好的基础上移植DSST到安卓所需的改动并不多，主要还是编译的配置。</p>
 <p><strong>博文结构：</strong></p>
 <p>[TOC]</p>
 <a id="more"></a>
@@ -187,21 +188,24 @@ var _hmt = _hmt || [];
 <li>opencv4android 3.2.0 </li>
 <li>测试机：荣耀7(arm64-v8a)、台电X98 Air III(x86)</li>
 </ul>
-<h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a><strong>前提条件</strong></h2><p>顺利运行需要目标机器cpu架构是x86或x86_64的(直接使用SSE)或者arm64-v8a（原因上篇博文说过的）。自己的渣机还是armeabi-v7a的，跑不了，在室友清明去浪的前夜赶紧测试了一下他的手机和平板，正是我想要的！果断扣下平板留着后面测试啊哈哈！啥？白天出去浪晚上回旅馆要拿平板看电影？诶诶诶，一堆人晚上玩点别的多好，狼人杀啥的，还一个人看电影？室友对曰：一堆人看电影最好~ 我：……要看你就还是拿手机看吧2333~</p>
+<h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a><strong>前提条件</strong></h2><p>顺利运行需要目标机器cpu架构是x86或x86_64的(直接使用SSE)或者arm64-v8a（原因上篇博文说过的）。自己的渣机还是armeabi-v7a的，跑不了，在室友清明去浪的前夜赶紧测试了一下他的手机和平板，正是我想要的！果断扣下平板留着后面测试啊哈哈！<br>啥？白天出去浪晚上回旅馆要拿平板看电影？<br>诶诶诶，一堆人晚上玩点别的多好，狼人杀啥的，还一个人看电影？<br>室友对曰：一堆人看电影最好~<br>我：……<br>我：要看你就还是拿手机看吧2333~</p>
 <p>查看自己手机或平板的cpu架构方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">adb shell  </div><div class="line">cat  /proc/cpuinfo</div></pre></td></tr></table></figure></p>
 <p>如图为室友平板的信息，对于flag一栏，需有sse。<br><img src="http://123.206.218.130/img/blog/170402/cpuinfo.png" alt="cpuinfo" align="center/"><br>ARM架构的长这样（Features这一栏需有neon,当然这还不够，ARMv7还是32位机器，这个工程需要64位机器才能正常运行）：<br><img src="http://123.206.218.130/img/blog/170402/cpuinfo_arm.png" alt="cpuinfo" align="center/"></p>
 <h2 id="移植过程及所遇问题"><a href="#移植过程及所遇问题" class="headerlink" title="移植过程及所遇问题"></a><strong>移植过程及所遇问题</strong></h2><p>首先在/app/src/main下新建一个include文件夹用于保存c头文件，将DSST的那几个头文件拷贝进来，而cpp文件则和native-lib.cpp放一块，即/app/src/main/cpp。然后在CMakeLists里加入头文件路径，并把其余cpp文件也编译添加到native-lib中来:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">include_directories(src/main/include)</div><div class="line">add_library( </div><div class="line">             native-lib</div><div class="line">             SHARED</div><div class="line">             src/main/cpp/native-lib.cpp src/main/cpp/fdssttracker.cpp src/main/cpp/fhog.cpp)</div></pre></td></tr></table></figure></p>
 <p>如图：<br><img src="http://123.206.218.130/img/blog/170402/dsst4android1.png" alt="SSE2NEON" align="center/"><br>然后同样的，如果目标机器是arm架构，sse.hpp里需做相应头文件的调整，编译，得到熟悉的报错：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">error: &quot;NEON support not enabled&quot;</div></pre></td></tr></table></figure></p>
 <p>解决方案：在app下的build.gradle的externalNativeBuild{cmake{}}下加入如下代码（注意大括号的包含关系）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">arguments &quot;-DANDROID_ARM_NEON=TRUE&quot;, &quot;-DANDROID_TOOLCHAIN=clang&quot;</div></pre></td></tr></table></figure></p>
 <p>编译，搞定，移植工作就算完成了。java层实现一下CameraBridgeViewBase.CvCameraViewListener2这个接口。控制逻辑上，在用户框选了跟踪目标后，将目标框和此帧画面喂给native层对tracker进行初始化，随后的每一帧都喂给native层另一个函数对tracker进行更新并返回新的目标位置给java层更新。</p>
+<h2 id="调试补充"><a href="#调试补充" class="headerlink" title="调试补充"></a><strong>调试补充</strong></h2><p>平时调试C/C++程序一般习惯用printf来掌握程序走向，判断可能的逻辑错误，NDK下自然也有这个需求。找到一种方法可以像java层使用Log类在logcat里打印消息：<br>首先是编译配置，在app下的build.gradle的android{defaultConfig{ndk{}}}下加入ldLibs “log”（加完如下，注意大括号的包含关系）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ndk&#123;</div><div class="line">      ldLibs &quot;log&quot;</div><div class="line">      abiFilters &apos;armeabi-v7a&apos;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>此外在CMakeLists中也要添加对log库的链接，如图：<br><img src="http://123.206.218.130/img/blog/170402/log.png" alt="tracking" align="center/"><br>在代码中使用如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">//打印一个简单Info级别的日志 对应Java的Log.i(&quot;JNI&quot;,&quot;This is log&quot;)</div><div class="line"></div><div class="line">__android_log_print(ANDROID_LOG_INFO,&quot;JNI&quot;,&quot;This is log&quot;); </div><div class="line"></div><div class="line">//打印格式化字符串 这里使用的是C语言中printf中的格式。关于C中的printf格式化输出可自行百度，文档非常多。</div><div class="line"></div><div class="line">int i=5;</div><div class="line">__android_log_print(ANDROID_LOG_INFO,&quot;JNI&quot;,&quot;i=%d&quot;,i);</div></pre></td></tr></table></figure></p>
+<p>利用参考资料4提供的更优雅地使用方式是新建一个头文件，拷贝以下代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">#include &quot;android/log.h&quot;</div><div class="line"></div><div class="line">#ifndef LOG_TAG</div><div class="line">    #define LOG_TAG &quot;JNI&quot;</div><div class="line">#endif</div><div class="line">#ifndef IS_DEBUG</div><div class="line">    #define IS_DEBUG true</div><div class="line">#endif</div><div class="line"></div><div class="line">#define LOG_NOOP (void) 0</div><div class="line">//__FILE__ 输出文件名</div><div class="line">//__LINE__ 输出行数</div><div class="line">//__PRETTY_FUNCTION__  输出方法名</div><div class="line">//可以按需选取 %s %u %s 分别与之对应</div><div class="line">#define LOG_PRINT(level,fmt,...) __android_log_print(level,LOG_TAG,&quot;(%s:%u) %s: &quot; fmt,__FILE__,__LINE__,__PRETTY_FUNCTION__,##__VA_ARGS__)</div><div class="line">//通过IS_DEBUG来控制是否输出日志</div><div class="line">#if IS_DEBUG</div><div class="line">    #define LOGI(fmt,...) LOG_PRINT(ANDROID_LOG_INFO,fmt,##__VA_ARGS__)</div><div class="line">#else</div><div class="line">    #define LOGI(...) LOG_NOOP</div><div class="line">#endif</div><div class="line"></div><div class="line">#if IS_DEBUG</div><div class="line">    #define LOGW(fmt,...) LOG_PRINT(ANDROID_LOG_WARN,fmt ,##__VA_ARGS__)</div><div class="line">#else</div><div class="line">    #define LOGW(...) LOG_NOOP</div><div class="line">#endif</div><div class="line"></div><div class="line">#if IS_DEBUG</div><div class="line">    #define LOGD(fmt,...) LOG_PRINT(ANDROID_LOG_DEBUG,fmt ,##__VA_ARGS__)</div><div class="line">#else</div><div class="line">    #define LOGD(...) LOG_NOOP</div><div class="line">#endif</div><div class="line"></div><div class="line">#if IS_DEBUG</div><div class="line">    #define LOGE(fmt,...) LOG_PRINT(ANDROID_LOG_ERROR,fmt ,##__VA_ARGS__)</div><div class="line">#else</div><div class="line">    #define LOGE(...) LOG_NOOP</div><div class="line">#endif</div><div class="line"></div><div class="line">#if IS_DEBUG</div><div class="line">    #define LOGF(fmt,...) LOG_PRINT(ANDROID_LOG_FATAL,fmt ,##__VA_ARGS__)</div><div class="line">#else</div><div class="line">    #define LOGF(...) LOG_NOOP</div><div class="line">#endif</div></pre></td></tr></table></figure></p>
+<p>然后在需要使用的cpp文件中include即可<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">#include&quot;LogUtils.h&quot;</div><div class="line"></div><div class="line">int func(int i)</div><div class="line">  &#123;</div><div class="line">    LOGW(&quot;this is a warning&quot;);</div><div class="line">    LOGE(&quot;i = %d&quot;,i);</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
 <h2 id="跟踪效果"><a href="#跟踪效果" class="headerlink" title="跟踪效果"></a><strong>跟踪效果</strong></h2><p>以下是用室友的荣耀8跟踪鹅厂公仔的效果录屏：<br><img src="http://123.206.218.130/img/blog/170402/tracking.gif" alt="tracking" align="center/"></p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a><strong>参考资料</strong></h2><ul>
-<li><a href="http://blog.csdn.net/jacke121/article/details/54562570" target="_blank" rel="external">目标跟踪学习算法DSST</a>（这位博主DSST分类下的几篇博文以及所引用的其他博主的相关博文都不错）</li>
-<li><a href="https://github.com/TuringKi/fDSST_cpp" target="_blank" rel="external">TuringKi/fDSST_cpp - github</a></li>
-<li><a href="https://github.com/jratcliff63367/sse2neon" target="_blank" rel="external">sse2neon - github</a></li>
-<li><a href="http://blog.csdn.net/hcx25909/article/details/8552099" target="_blank" rel="external">ARM上ROS的kinect配置</a></li>
-<li><a href="http://www.cnblogs.com/subo_peng/p/5577716.html" target="_blank" rel="external">Qt5.5.1移植到freescale imx6</a></li>
-<li><a href="https://github.com/OpenNI/OpenNI/issues/81" target="_blank" rel="external">error compiling on ARM</a></li>
+<li><a href="https://developer.android.com/ndk/guides/cmake.html#variables" target="_blank" rel="external">CMake | Android Developers-Using CMake variables in Gradle</a></li>
+<li><a href="https://developer.android.com/studio/projects/add-native-code.html" target="_blank" rel="external">向您的项目添加 C 和 C++ 代码</a></li>
+<li><a href="http://brian.io/android-ndk-r10c-docs/Programmers_Guide/html/md_3__key__topics__c_p_u__support__c_p_u-_a_r_m-_n_e_o_n.html" target="_blank" rel="external">NDK Programmer’s Guide</a></li>
+<li><a href="http://blog.csdn.net/venusic/article/details/52294815" target="_blank" rel="external">Android Studio NDK 入门教程（4）–优雅的在C++中输出Logcat</a></li>
+<li><a href="stackoverflow.com/questions/20596389/roi-in-opencv-from-android">java - ROI in OpenCV from Android - Stack Overflow</a></li>
 </ul>
 
       
@@ -392,11 +396,11 @@ var _hmt = _hmt || [];
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">tracking</a>
+                <a href="javascript:void(0)" class="js-tag color3">QT</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">QT</a>
+                <a href="javascript:void(0)" class="js-tag color4">tracking</a>
               </li>
             
             <div class="clearfix"></div>
